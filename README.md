@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/v/amiriel/alpha?style=flat-square" alt="npm version (alpha)" /></a>
+  <a href="https://amiriel.com"><img src="https://img.shields.io/badge/website-amiriel.com-6b7280?style=flat-square" alt="Official website" /></a>
+  <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/v/amiriel/beta?style=flat-square" alt="npm version (beta)" /></a>
   <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/dm/amiriel?style=flat-square" alt="npm downloads" /></a>
   <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/l/amiriel?style=flat-square" alt="license" /></a>
   <a href="https://github.com/dingdangdog/Amiriel"><img src="https://img.shields.io/github/stars/dingdangdog/Amiriel?style=flat-square" alt="GitHub stars" /></a>
@@ -25,32 +26,34 @@
 - Host-controlled media upload via `media-request` events
 - No storage, authentication, database, or application workflow bundled
 
+The full hosted product (accounts, delivery, vaults) lives at **[amiriel.com](https://amiriel.com)**.
+
 ## Install
 
-Stable releases use the default npm tag. Pre-releases are published under the `alpha` tag.
+Stable releases use the default npm tag. Pre-releases are published under the `beta` tag (earlier snapshots used `alpha`).
 
 **npm**
 
 ```bash
-npm install amiriel@alpha
+npm install amiriel@beta
 ```
 
 **pnpm**
 
 ```bash
-pnpm add amiriel@alpha
+pnpm add amiriel@beta
 ```
 
 **yarn**
 
 ```bash
-yarn add amiriel@alpha
+yarn add amiriel@beta
 ```
 
 **bun**
 
 ```bash
-bun add amiriel@alpha
+bun add amiriel@beta
 ```
 
 When `0.0.1` or later is released to `latest`, you can install without the tag:
@@ -101,12 +104,26 @@ async function onMediaRequest(request: AmirielMediaRequest) {
 </script>
 
 <template>
-  <AmirielBodyEditor v-model="document" locale="en" @media-request="onMediaRequest" />
+  <AmirielBodyEditor
+    v-model="document"
+    locale="en"
+    :show-github-link="true"
+    @media-request="onMediaRequest"
+  />
   <AmirielBodyRenderer :document="document" locale="en" />
 </template>
 ```
 
 The package does not include storage, authentication, database code, or application workflow. Host apps own media upload and pass the resulting media object back through `request.resolve(media)`.
+
+### Props (editor)
+
+| Prop | Default | Description |
+| --- | --- | --- |
+| `showGithubLink` | `true` | Show GitHub link on the text-block toolbar |
+| `githubUrl` | `https://github.com/dingdangdog/Amiriel` | Target URL for the GitHub button |
+
+Set `:show-github-link="false"` in production apps that should not display the open-source attribution.
 
 ## Exports
 

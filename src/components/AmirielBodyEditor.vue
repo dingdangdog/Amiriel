@@ -44,6 +44,9 @@ import { formatAmirielLabel, resolveAmirielLabels } from "../labels";
 import AmirielCoreMediaLightbox from "./AmirielMediaLightbox.vue";
 import AmirielCoreMediaVideo from "./AmirielMediaVideo.vue";
 import AmirielCoreMediaVideoThumbnail from "./AmirielMediaVideoThumbnail.vue";
+import GithubMarkIcon from "./GithubMarkIcon.vue";
+
+const DEFAULT_GITHUB_URL = "https://github.com/dingdangdog/Amiriel";
 
 const props = withDefaults(defineProps<{
   modelValue: AmirielDocument;
@@ -52,10 +55,14 @@ const props = withDefaults(defineProps<{
   locale?: "en" | "zh";
   labels?: Partial<AmirielLabels>;
   accept?: string;
+  showGithubLink?: boolean;
+  githubUrl?: string;
 }>(), {
   readonly: false,
   locale: "en",
   accept: "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime",
+  showGithubLink: true,
+  githubUrl: DEFAULT_GITHUB_URL,
 });
 
 const emit = defineEmits<{
@@ -833,6 +840,18 @@ onUnmounted(() => {
                     </button>
                   </div>
                 </div>
+                <a
+                  v-if="showGithubLink"
+                  :href="githubUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="amiriel-body-editor__github-link"
+                  :aria-label="resolvedLabels.viewOnGithub"
+                  :title="resolvedLabels.viewOnGithub"
+                  @pointerdown.stop
+                >
+                  <GithubMarkIcon />
+                </a>
                 <button type="button" class="is-danger" :aria-label="resolvedLabels.deleteTextBlock"
                   :title="resolvedLabels.deleteTextBlock" @pointerdown.stop
                   @click.stop="confirmRemoveTextBlock(block.id)">
@@ -1293,6 +1312,7 @@ onUnmounted(() => {
 }
 
 .amiriel-body-editor__text-tools button,
+.amiriel-body-editor__text-tools a.amiriel-body-editor__github-link,
 .amiriel-body-editor__placement-tools button,
 .amiriel-body-editor__tile-action {
   display: inline-flex;
@@ -1308,6 +1328,7 @@ onUnmounted(() => {
 }
 
 .amiriel-body-editor__text-tools button:hover,
+.amiriel-body-editor__text-tools a.amiriel-body-editor__github-link:hover,
 .amiriel-body-editor__placement-tools button:hover {
   background: rgba(255, 255, 255, 0.15);
 }

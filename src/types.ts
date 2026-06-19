@@ -126,6 +126,7 @@ export interface AmirielLabels {
   prevPage: string;
   nextPage: string;
   viewMedia: string;
+  viewOnGithub: string;
 }
 
 export interface AmirielMediaUploadProgress {

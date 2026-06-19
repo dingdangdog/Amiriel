@@ -49,6 +49,7 @@ export const AMIRIEL_DEFAULT_LABELS: Record<"en" | "zh", AmirielLabels> = {
     prevPage: "Previous page",
     nextPage: "Next page",
     viewMedia: "View media",
+    viewOnGithub: "View on GitHub",
   },
   zh: {
     themeLabel: "\u9605\u8bfb\u6c1b\u56f4",
@@ -106,6 +107,7 @@ export const AMIRIEL_DEFAULT_LABELS: Record<"en" | "zh", AmirielLabels> = {
     prevPage: "\u4e0a\u4e00\u9875",
     nextPage: "\u4e0b\u4e00\u9875",
     viewMedia: "\u67e5\u770b\u5a92\u4f53",
+    viewOnGithub: "\u5728 GitHub \u67e5\u770b",
   },
 };
 
