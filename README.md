@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://amiriel.com"><img src="https://img.shields.io/badge/website-amiriel.com-6b7280?style=flat-square" alt="Official website" /></a>
+  <a href="https://amiriel.com/playground"><img src="https://img.shields.io/badge/demo-playground-6b7280?style=flat-square" alt="Live playground" /></a>
   <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/v/amiriel/beta?style=flat-square" alt="npm version (beta)" /></a>
   <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/dm/amiriel?style=flat-square" alt="npm downloads" /></a>
   <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/l/amiriel?style=flat-square" alt="license" /></a>
@@ -27,6 +28,8 @@
 - No storage, authentication, database, or application workflow bundled
 
 The full hosted product (accounts, delivery, vaults) lives at **[amiriel.com](https://amiriel.com)**.
+
+Try the editor in your browser (no install): **[amiriel.com/playground](https://amiriel.com/playground)**.
 
 ## Install
 

@@ -840,16 +840,9 @@ onUnmounted(() => {
                     </button>
                   </div>
                 </div>
-                <a
-                  v-if="showGithubLink"
-                  :href="githubUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="amiriel-body-editor__github-link"
-                  :aria-label="resolvedLabels.viewOnGithub"
-                  :title="resolvedLabels.viewOnGithub"
-                  @pointerdown.stop
-                >
+                <a v-if="showGithubLink" :href="githubUrl" target="_blank" rel="noopener noreferrer"
+                  class="amiriel-body-editor__github-link" :aria-label="resolvedLabels.viewOnGithub"
+                  :title="resolvedLabels.viewOnGithub" @pointerdown.stop>
                   <GithubMarkIcon />
                 </a>
                 <button type="button" class="is-danger" :aria-label="resolvedLabels.deleteTextBlock"
@@ -922,7 +915,8 @@ onUnmounted(() => {
           <div class="amiriel-body-editor__stats">
             <span>{{ label(resolvedLabels.textBlockLimit, {
               count: pageTextBlocks(selectedPage).length, max:
-                resolvedLimits.maxTextBlocksPerPage }) }}</span>
+                resolvedLimits.maxTextBlocksPerPage
+            }) }}</span>
             <span>{{ label(resolvedLabels.charCount, { count: combinedPageText(selectedPage).trim().length }) }}</span>
           </div>
         </section>
@@ -941,42 +935,31 @@ onUnmounted(() => {
           </div>
           <div class="amiriel-body-editor__stats">
             <span>{{ label(resolvedLabels.imageQuota, { count: mediaCounts.images, max: resolvedLimits.maxImages })
-              }}</span>
+            }}</span>
             <span>{{ label(resolvedLabels.videoQuota, { count: mediaCounts.videos, max: resolvedLimits.maxVideos })
-              }}</span>
+            }}</span>
           </div>
           <div v-if="draft.media.length || pendingUpload" class="amiriel-body-editor__media-grid">
-            <div
-              v-if="pendingUpload"
-              class="amiriel-body-editor__media-tile"
-              :class="pendingUpload.status === 'failed' ? 'is-failed' : 'is-pending'"
-            >
+            <div v-if="pendingUpload" class="amiriel-body-editor__media-tile"
+              :class="pendingUpload.status === 'failed' ? 'is-failed' : 'is-pending'">
               <div class="amiriel-body-editor__media-preview">
                 <img v-if="pendingUpload.mediaType === 'image'" :src="pendingUpload.previewUrl" alt="" />
                 <video v-else :src="pendingUpload.previewUrl" muted playsinline preload="metadata" />
-                <div
-                  v-if="pendingUpload.status === 'uploading'"
-                  class="amiriel-body-editor__upload-overlay"
-                  aria-live="polite"
-                >
+                <div v-if="pendingUpload.status === 'uploading'" class="amiriel-body-editor__upload-overlay"
+                  aria-live="polite">
                   <span class="amiriel-body-editor__upload-label">
                     {{ resolvedLabels.uploading }}
                     <template v-if="pendingUpload.progress !== null"> {{ pendingUpload.progress }}%</template>
                   </span>
-                  <div class="amiriel-body-editor__upload-progress" role="progressbar" :aria-valuenow="pendingUpload.progress ?? undefined" aria-valuemin="0" aria-valuemax="100">
-                    <div
-                      class="amiriel-body-editor__upload-progress-bar"
+                  <div class="amiriel-body-editor__upload-progress" role="progressbar"
+                    :aria-valuenow="pendingUpload.progress ?? undefined" aria-valuemin="0" aria-valuemax="100">
+                    <div class="amiriel-body-editor__upload-progress-bar"
                       :class="{ 'is-indeterminate': pendingUpload.progress === null }"
-                      :style="pendingUpload.progress === null ? undefined : { width: `${pendingUpload.progress}%` }"
-                    />
+                      :style="pendingUpload.progress === null ? undefined : { width: `${pendingUpload.progress}%` }" />
                   </div>
                 </div>
-                <div
-                  v-else
-                  class="amiriel-body-editor__upload-overlay is-failed"
-                  role="alert"
-                  :aria-label="resolvedLabels.uploadFailed"
-                >
+                <div v-else class="amiriel-body-editor__upload-overlay is-failed" role="alert"
+                  :aria-label="resolvedLabels.uploadFailed">
                   <p class="amiriel-body-editor__upload-failed-title">{{ resolvedLabels.uploadFailed }}</p>
                   <div class="amiriel-body-editor__upload-failed-actions">
                     <button type="button" @click.stop="retryFailedUpload">
@@ -1655,11 +1638,27 @@ onUnmounted(() => {
 }
 
 @keyframes amiriel-upload-failed-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-2px); }
-  40% { transform: translateX(2px); }
-  60% { transform: translateX(-2px); }
-  80% { transform: translateX(2px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-2px);
+  }
+
+  40% {
+    transform: translateX(2px);
+  }
+
+  60% {
+    transform: translateX(-2px);
+  }
+
+  80% {
+    transform: translateX(2px);
+  }
 }
 
 .amiriel-body-editor__upload-label {
@@ -1689,8 +1688,13 @@ onUnmounted(() => {
 }
 
 @keyframes amiriel-upload-indeterminate {
-  0% { transform: translateX(-120%); }
-  100% { transform: translateX(320%); }
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(320%);
+  }
 }
 
 .amiriel-body-editor__media-preview video {
