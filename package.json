@@ -1,6 +1,6 @@
 {
   "name": "amiriel",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta.3",
   "description": "Portable Vue 3 body editor and renderer for Amiriel letters.",
   "type": "module",
   "license": "MIT",

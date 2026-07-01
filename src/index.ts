@@ -19,13 +19,25 @@ export type {
   AmirielTextBlock,
   AmirielTextColor,
   AmirielTheme,
+  AmirielBuiltinTheme,
 } from "./types";
+
+export type { AmirielPaperThemeVars, AmirielThemeDefinition } from "./themes";
 
 export {
   AMIRIEL_DEFAULT_LABELS,
   formatAmirielLabel,
   resolveAmirielLabels,
 } from "./labels";
+
+export {
+  AMIRIEL_BUILTIN_THEME_DEFINITIONS,
+  AMIRIEL_BUILTIN_THEME_IDS,
+  amirielThemeCssVars,
+  findAmirielThemeDefinition,
+  mergeAmirielThemeDefinitions,
+  themeDefaultTextColorFor,
+} from "./themes";
 
 export {
   AMIRIEL_FONT_OPTIONS,

@@ -2,7 +2,9 @@
 import { computed, ref } from "vue";
 import { FilmIcon } from "@heroicons/vue/24/outline";
 import type { AmirielDocument, AmirielLabels, AmirielMedia, AmirielMediaPlacement, AmirielPage, AmirielTextBlock } from "../types";
+import type { AmirielThemeDefinition } from "../themes";
 import { AMIRIEL_FONT_STACKS, AMIRIEL_TEXT_COLORS, combinedPageText, normalizeDocument, safeAspectRatio } from "../utils";
+import { amirielThemeCssVars, findAmirielThemeDefinition } from "../themes";
 import { resolveAmirielLabels } from "../labels";
 import AmirielCoreMediaLightbox from "./AmirielMediaLightbox.vue";
 import AmirielCoreMediaVideo from "./AmirielMediaVideo.vue";
@@ -13,6 +15,7 @@ const props = withDefaults(defineProps<{
   title?: string;
   locale?: "en" | "zh";
   labels?: Partial<AmirielLabels>;
+  themes?: AmirielThemeDefinition[];
   variant?: "paper" | "layer";
   interactive?: boolean;
   hidden?: boolean;
@@ -28,6 +31,9 @@ const props = withDefaults(defineProps<{
 
 const labels = computed(() => resolveAmirielLabels(props.locale, props.labels));
 const normalized = computed(() => normalizeDocument(props.document));
+const activeThemeStyle = computed(() =>
+  amirielThemeCssVars(findAmirielThemeDefinition(normalized.value.theme, props.themes)),
+);
 const sortedPages = computed(() => [...normalized.value.pages].sort((a, b) => a.order - b.order));
 const currentPage = computed(() => sortedPages.value[props.pageIndex] ?? sortedPages.value[0]);
 const currentTextBlocks = computed(() => currentPage.value?.textBlocks ?? []);
@@ -104,10 +110,10 @@ function closeMedia() {
   <div
     class="amiriel-renderer"
     :class="[
-      `amiriel-theme-${normalized.theme || 'midnight'}`,
       `amiriel-renderer--${variant}`,
       { 'amiriel-renderer--hidden': hidden },
     ]"
+    :style="activeThemeStyle"
   >
     <article v-if="variant === 'paper'" class="amiriel-renderer__paper">
       <div class="amiriel-renderer__head">
@@ -221,30 +227,6 @@ function closeMedia() {
   --amiriel-paper-media-border: rgba(255, 255, 255, 0.1);
   --amiriel-paper-media-bg: rgba(0, 0, 0, 0.28);
   color: var(--amiriel-paper-text);
-}
-
-.amiriel-theme-paper {
-  --amiriel-paper-border: rgba(180, 140, 80, 0.34);
-  --amiriel-paper-bg: radial-gradient(circle at 12% 0%, rgba(214, 170, 103, 0.14), transparent 38%), linear-gradient(180deg, #f7f2e8 0%, #ebe3d4 100%);
-  --amiriel-paper-text: #3a3228;
-  --amiriel-paper-head: rgba(62, 48, 32, 0.92);
-  --amiriel-paper-accent: rgba(122, 88, 42, 0.88);
-  --amiriel-paper-divider: rgba(180, 140, 80, 0.24);
-  --amiriel-paper-shadow: 0 20px 48px rgba(72, 54, 32, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.42);
-  --amiriel-paper-media-border: rgba(110, 82, 48, 0.16);
-  --amiriel-paper-media-bg: rgba(255, 255, 255, 0.28);
-}
-
-.amiriel-theme-memorial {
-  --amiriel-paper-border: rgba(159, 178, 122, 0.28);
-  --amiriel-paper-bg: radial-gradient(circle at 12% 0%, rgba(159, 178, 122, 0.1), transparent 38%), linear-gradient(180deg, #1e2822 0%, #121916 100%);
-  --amiriel-paper-text: #dde5d4;
-  --amiriel-paper-head: rgba(221, 229, 212, 0.92);
-  --amiriel-paper-accent: rgba(159, 178, 122, 0.88);
-  --amiriel-paper-divider: rgba(159, 178, 122, 0.2);
-  --amiriel-paper-shadow: 0 20px 48px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(159, 178, 122, 0.08);
-  --amiriel-paper-media-border: rgba(159, 178, 122, 0.16);
-  --amiriel-paper-media-bg: rgba(0, 0, 0, 0.24);
 }
 
 .amiriel-renderer__paper {

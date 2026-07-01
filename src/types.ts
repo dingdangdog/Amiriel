@@ -1,4 +1,6 @@
-export type AmirielTheme = "midnight" | "paper" | "memorial";
+export type AmirielBuiltinTheme = "midnight" | "paper" | "memorial";
+/** Built-in ids or any custom theme id supplied through the `themes` prop. */
+export type AmirielTheme = AmirielBuiltinTheme | (string & {});
 export type AmirielFont = "system" | "serif" | "handwritten";
 export type AmirielTextColor =
   | "red"
@@ -80,12 +82,14 @@ export interface AmirielEditorLimits {
 
 export interface AmirielLabels {
   themeLabel: string;
-  themes: Record<AmirielTheme, string>;
+  themes: Partial<Record<AmirielBuiltinTheme, string>> & Record<string, string>;
   fonts: Record<AmirielFont, string>;
   pagesCount: string;
   addPage: string;
   removePage: string;
   pagePlaceholder: string;
+  /** Placeholder shown inside empty text-block textareas. */
+  textBlockPlaceholder: string;
   tapPaperHint: string;
   textBlocksTitle: string;
   addTextBlock: string;

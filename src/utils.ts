@@ -8,6 +8,7 @@ import type {
   AmirielTextColor,
   AmirielTheme,
 } from "./types";
+import { AMIRIEL_BUILTIN_THEME_IDS, themeDefaultTextColorFor } from "./themes";
 
 export const AMIRIEL_TEXT_COLORS: Record<AmirielTextColor, string> = {
   red: "#ef4444",
@@ -26,13 +27,13 @@ export const AMIRIEL_TEXT_COLORS: Record<AmirielTextColor, string> = {
 
 export const AMIRIEL_TEXT_COLOR_OPTIONS = Object.keys(AMIRIEL_TEXT_COLORS) as AmirielTextColor[];
 export const AMIRIEL_FONT_OPTIONS: AmirielFont[] = ["system", "serif", "handwritten"];
-export const AMIRIEL_THEME_OPTIONS: AmirielTheme[] = ["midnight", "paper", "memorial"];
+export const AMIRIEL_THEME_OPTIONS = AMIRIEL_BUILTIN_THEME_IDS;
 
-export const AMIRIEL_THEME_DEFAULT_TEXT_COLOR: Record<AmirielTheme, AmirielTextColor> = {
+export const AMIRIEL_THEME_DEFAULT_TEXT_COLOR = {
   midnight: "white",
   paper: "black",
   memorial: "white",
-};
+} as const satisfies Record<string, AmirielTextColor>;
 
 export const AMIRIEL_FONT_STACKS: Record<AmirielFont, string> = {
   system: "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -41,7 +42,7 @@ export const AMIRIEL_FONT_STACKS: Record<AmirielFont, string> = {
 };
 
 export function themeDefaultTextBlockColor(theme?: AmirielTheme): AmirielTextColor {
-  return AMIRIEL_THEME_DEFAULT_TEXT_COLOR[theme || "midnight"];
+  return themeDefaultTextColorFor(theme);
 }
 
 export function clamp(value: number, min: number, max: number) {

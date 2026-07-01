@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://amiriel.com"><img src="https://img.shields.io/badge/website-amiriel.com-6b7280?style=flat-square" alt="Official website" /></a>
-  <a href="https://amiriel.com/playground"><img src="https://img.shields.io/badge/demo-playground-6b7280?style=flat-square" alt="Live playground" /></a>
+  <!-- <a href="https://amiriel.com"><img src="https://img.shields.io/badge/website-amiriel.com-6b7280?style=flat-square" alt="Official website" /></a>
+  <a href="https://amiriel.com/playground"><img src="https://img.shields.io/badge/demo-playground-6b7280?style=flat-square" alt="Live playground" /></a> -->
   <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/v/amiriel/beta?style=flat-square" alt="npm version (beta)" /></a>
   <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/dm/amiriel?style=flat-square" alt="npm downloads" /></a>
   <a href="https://www.npmjs.com/package/amiriel"><img src="https://img.shields.io/npm/l/amiriel?style=flat-square" alt="license" /></a>
@@ -123,10 +123,76 @@ The package does not include storage, authentication, database code, or applicat
 
 | Prop | Default | Description |
 | --- | --- | --- |
+| `locale` | `"en"` | Built-in label locale (`en` or `zh`) |
+| `labels` | — | Partial override for any UI string (see [Labels](#labels)) |
+| `themes` | — | Override built-in themes and/or register custom paper themes (see [Themes](#themes)) |
 | `showGithubLink` | `true` | Show GitHub link on the text-block toolbar |
 | `githubUrl` | `https://github.com/dingdangdog/Amiriel` | Target URL for the GitHub button |
 
 Set `:show-github-link="false"` in production apps that should not display the open-source attribution.
+
+### Labels
+
+Pass `:labels="{ ... }"` to override copy. Common keys:
+
+| Key | Purpose |
+| --- | --- |
+| `tapPaperHint` | Hint shown on blank paper before any text block exists |
+| `pagePlaceholder` | Legacy single-field fallback text on read-only pages |
+| `textBlockPlaceholder` | Placeholder inside empty text-block textareas (default: `Start writing...` / `在此输入...`) |
+| `themes` | Display names keyed by theme id, e.g. `{ midnight: "Midnight envelope" }` |
+
+Example:
+
+```vue
+<AmirielBodyEditor
+  v-model="document"
+  locale="zh"
+  :labels="{
+    textBlockPlaceholder: '写下你想说的话…',
+    tapPaperHint: '点击纸张空白处添加文字块',
+  }"
+/>
+```
+
+### Themes
+
+Built-in paper themes: `midnight`, `paper`, `memorial`. Definitions live in `AMIRIEL_BUILTIN_THEME_DEFINITIONS` and are applied through CSS variables on the editor/renderer root.
+
+Register additional themes or override built-ins with the `themes` prop:
+
+```vue
+<script setup lang="ts">
+import {
+  AmirielBodyEditor,
+  type AmirielThemeDefinition,
+} from "amiriel";
+
+const customThemes: AmirielThemeDefinition[] = [
+  {
+    id: "ocean",
+    label: "Ocean dusk",
+    swatch: "linear-gradient(135deg, #1e3a5f, #0a1628)",
+    defaultTextColor: "white",
+    vars: {
+      paperBorder: "rgba(96, 165, 250, 0.28)",
+      paperBg: "linear-gradient(180deg, #1a2f4a 0%, #0d1824 100%)",
+      paperText: "#dbeafe",
+      paperDivider: "rgba(96, 165, 250, 0.2)",
+      paperAccent: "rgba(147, 197, 253, 0.88)",
+    },
+  },
+];
+</script>
+
+<template>
+  <AmirielBodyEditor v-model="document" :themes="customThemes" />
+</template>
+```
+
+Set `document.theme` to a custom id (e.g. `"ocean"`) to select it. Theme labels can also be localized through `labels.themes`.
+
+Exports for theme helpers: `AMIRIEL_BUILTIN_THEME_DEFINITIONS`, `mergeAmirielThemeDefinitions`, `amirielThemeCssVars`, `findAmirielThemeDefinition`.
 
 ## Exports
 
@@ -139,6 +205,7 @@ Set `:show-github-link="false"` in production apps that should not display the o
 | `AmirielMediaVideoThumbnail` | Video thumbnail with duration |
 | `AmirielDocument` and related types | Shared document model |
 | `normalizeDocument`, `combinedPageText`, … | Document helpers |
+| `AMIRIEL_BUILTIN_THEME_DEFINITIONS`, `mergeAmirielThemeDefinitions`, … | Theme registry and CSS variable helpers |
 
 ## Star History
 

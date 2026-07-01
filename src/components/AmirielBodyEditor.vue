@@ -24,12 +24,12 @@ import type {
   AmirielTheme,
   AmirielFont,
 } from "../types";
+import type { AmirielThemeDefinition } from "../themes";
 import {
   AMIRIEL_FONT_OPTIONS,
   AMIRIEL_FONT_STACKS,
   AMIRIEL_TEXT_COLORS,
   AMIRIEL_TEXT_COLOR_OPTIONS,
-  AMIRIEL_THEME_OPTIONS,
   clamp,
   combinedPageText,
   heightPercentForWidth,
@@ -40,6 +40,12 @@ import {
   syncPageText,
   themeDefaultTextBlockColor,
 } from "../utils";
+import {
+  amirielThemeCssVars,
+  findAmirielThemeDefinition,
+  mergeAmirielThemeDefinitions,
+  themeDefaultTextColorFor,
+} from "../themes";
 import { formatAmirielLabel, resolveAmirielLabels } from "../labels";
 import AmirielCoreMediaLightbox from "./AmirielMediaLightbox.vue";
 import AmirielCoreMediaVideo from "./AmirielMediaVideo.vue";
@@ -54,6 +60,8 @@ const props = withDefaults(defineProps<{
   limits?: AmirielEditorLimits;
   locale?: "en" | "zh";
   labels?: Partial<AmirielLabels>;
+  /** Built-in overrides and/or additional custom paper themes. */
+  themes?: AmirielThemeDefinition[];
   accept?: string;
   showGithubLink?: boolean;
   githubUrl?: string;
@@ -119,6 +127,11 @@ let syncingFromParent = false;
 
 const textBlockFontSizes = [12, 14, 16, 18, 20, 24] as const;
 const resolvedLabels = computed(() => resolveAmirielLabels(props.locale, props.labels));
+const resolvedThemes = computed(() => mergeAmirielThemeDefinitions(props.themes));
+const activeThemeDefinition = computed(() =>
+  findAmirielThemeDefinition(draft.value.theme, props.themes),
+);
+const activeThemeStyle = computed(() => amirielThemeCssVars(activeThemeDefinition.value));
 const resolvedLimits = computed(() => ({
   maxPages: props.limits?.maxPages ?? 20,
   maxTextBlocksPerPage: props.limits?.maxTextBlocksPerPage ?? 4,
@@ -155,7 +168,7 @@ watch(
 watch(
   () => draft.value.theme,
   (theme) => {
-    lastTextBlockColor.value = themeDefaultTextBlockColor(theme);
+    lastTextBlockColor.value = themeDefaultTextColorFor(theme, props.themes);
   },
 );
 
@@ -255,9 +268,13 @@ function syncPageMediaIds(page: AmirielPage) {
   page.mediaIds = Array.from(new Set((page.mediaPlacements ?? []).map((placement) => placement.mediaId)));
 }
 
-function selectTheme(theme: AmirielTheme) {
+function themeLabel(theme: AmirielThemeDefinition) {
+  return theme.label || resolvedLabels.value.themes[theme.id as AmirielTheme] || theme.id;
+}
+
+function selectTheme(themeId: string) {
   if (props.readonly) return;
-  draft.value.theme = theme;
+  draft.value.theme = themeId;
   commit();
 }
 
@@ -663,15 +680,15 @@ function onDragMove(event: PointerEvent) {
 
 function endDrag() {
   if (!dragState) return;
-  const wasTextDrag = dragState.kind === "text";
+  const draggedTextBlockId = dragState.kind === "text" ? dragState.id : "";
   dragState.target.releasePointerCapture?.(dragState.pointerId);
   dragState = null;
   window.removeEventListener("pointermove", onDragMove);
   window.removeEventListener("pointerup", endDrag);
   window.removeEventListener("pointercancel", endDrag);
   commit();
-  if (wasTextDrag) {
-    activeTextBlockId.value = "";
+  if (draggedTextBlockId) {
+    activeTextBlockId.value = draggedTextBlockId;
     closeMenus();
   }
 }
@@ -729,7 +746,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="amiriel-body-editor" :class="[`amiriel-theme-${draft.theme || 'midnight'}`]">
+  <section class="amiriel-body-editor" :style="activeThemeStyle">
     <header class="amiriel-body-editor__bar">
       <div class="amiriel-body-editor__pages">
         <button v-for="page in draft.pages" :key="page.id" type="button" class="amiriel-body-editor__page-button"
@@ -742,11 +759,11 @@ onUnmounted(() => {
         </button>
       </div>
       <div class="amiriel-body-editor__theme" role="radiogroup" :aria-label="resolvedLabels.themeLabel">
-        <button v-for="theme in AMIRIEL_THEME_OPTIONS" :key="theme" type="button" role="radio"
-          class="amiriel-body-editor__theme-button" :class="{ 'is-active': draft.theme === theme }"
-          :aria-checked="draft.theme === theme" :disabled="readonly" @click="selectTheme(theme)">
-          <span class="amiriel-body-editor__swatch" :class="`is-${theme}`" />
-          <span>{{ resolvedLabels.themes[theme] }}</span>
+        <button v-for="theme in resolvedThemes" :key="theme.id" type="button" role="radio"
+          class="amiriel-body-editor__theme-button" :class="{ 'is-active': draft.theme === theme.id }"
+          :aria-checked="draft.theme === theme.id" :disabled="readonly" @click="selectTheme(theme.id)">
+          <span class="amiriel-body-editor__swatch" :style="{ background: theme.swatch }" />
+          <span>{{ themeLabel(theme) }}</span>
         </button>
       </div>
     </header>
@@ -779,7 +796,7 @@ onUnmounted(() => {
               @focusout="onTextBlockFocusOut($event, block.id)">
               <textarea v-model="block.text" :ref="(el) => setTextBlockTextareaRef(block.id, el)"
                 class="amiriel-body-editor__textarea" :style="textBlockContentStyle(block, selectedPage?.font)"
-                :placeholder="resolvedLabels.pagePlaceholder" :disabled="readonly"
+                :placeholder="resolvedLabels.textBlockPlaceholder" :disabled="readonly"
                 @input="selectedPage && onTextBlockInput(selectedPage)" @pointerdown.stop
                 @focus="selectedPage && selectTextBlock(selectedPage, block)" />
               <div v-if="!readonly && activeTextBlockId === block.id" class="amiriel-body-editor__text-tools"
@@ -1023,20 +1040,8 @@ onUnmounted(() => {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.amiriel-body-editor.amiriel-theme-paper {
-  --amiriel-paper-border: rgba(180, 140, 80, 0.34);
-  --amiriel-paper-bg: radial-gradient(circle at 12% 0%, rgba(214, 170, 103, 0.14), transparent 38%), linear-gradient(180deg, #f7f2e8 0%, #ebe3d4 100%);
-  --amiriel-paper-text: #3a3228;
-  --amiriel-paper-divider: rgba(180, 140, 80, 0.24);
-  --amiriel-paper-accent: rgba(122, 88, 42, 0.88);
-}
-
-.amiriel-body-editor.amiriel-theme-memorial {
-  --amiriel-paper-border: rgba(159, 178, 122, 0.28);
-  --amiriel-paper-bg: radial-gradient(circle at 12% 0%, rgba(159, 178, 122, 0.1), transparent 38%), linear-gradient(180deg, #1e2822 0%, #121916 100%);
-  --amiriel-paper-text: #dde5d4;
-  --amiriel-paper-divider: rgba(159, 178, 122, 0.2);
-  --amiriel-paper-accent: rgba(159, 178, 122, 0.88);
+.amiriel-body-editor__textarea::placeholder {
+  color: color-mix(in srgb, var(--amiriel-paper-text) 42%, transparent);
 }
 
 .amiriel-body-editor button {
@@ -1125,18 +1130,6 @@ onUnmounted(() => {
   height: 1.25rem;
   border-radius: 999px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
-}
-
-.amiriel-body-editor__swatch.is-midnight {
-  background: linear-gradient(135deg, #373737, #050505);
-}
-
-.amiriel-body-editor__swatch.is-paper {
-  background: linear-gradient(135deg, #ece8df, #d6aa67);
-}
-
-.amiriel-body-editor__swatch.is-memorial {
-  background: linear-gradient(135deg, #9fb27a, #252525);
 }
 
 .amiriel-body-editor__layout {
