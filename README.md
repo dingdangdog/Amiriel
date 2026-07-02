@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./logo.webp" alt="Amiriel logo" width="96" height="96" />
+  <img src="https://amiriel.com/logo/amiriel_256x256.webp" alt="Amiriel logo" width="96" height="96" />
 </p>
 
 <h1 align="center">Amiriel</h1>
