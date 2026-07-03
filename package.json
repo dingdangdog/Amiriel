@@ -1,59 +1,48 @@
 {
   "name": "amiriel",
-  "version": "0.0.1-beta.5",
-  "description": "Portable Vue 3 body editor and renderer for Amiriel letters.",
+  "version": "0.0.1-beta.6",
+  "description": "Meta package that re-exports @amiriel/core for npm install amiriel.",
   "type": "module",
   "license": "MIT",
   "homepage": "https://amiriel.com",
+  "packageManager": "pnpm@11.7.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dingdangdog/Amiriel.git"
+    "url": "git+https://github.com/Amirieljs/Amiriel.git"
   },
   "bugs": {
-    "url": "https://github.com/dingdangdog/Amiriel/issues"
+    "url": "https://github.com/Amirieljs/Amiriel/issues"
   },
   "keywords": [
-    "vue",
-    "vue3",
-    "vue-component",
-    "editor",
+    "amiriel",
     "letter-editor",
-    "rich-text",
+    "document-model",
     "typescript",
-    "vite"
+    "framework-agnostic"
   ],
-  "main": "./dist/amiriel.umd.cjs",
-  "module": "./dist/amiriel.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/amiriel.js",
-      "require": "./dist/amiriel.umd.cjs"
-    },
-    "./style.css": "./dist/style.css"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
   },
   "files": [
     "dist",
     "LICENSE",
-    "README.md",
-    "CHANGELOG.md"
+    "README.md"
   ],
   "scripts": {
-    "build": "vite build && vue-tsc -p tsconfig.json --declaration --emitDeclarationOnly",
-    "typecheck": "vue-tsc -p tsconfig.json --noEmit"
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
-  "peerDependencies": {
-    "vue": ">=3.5.0"
-  },
+  "sideEffects": false,
   "dependencies": {
-    "@heroicons/vue": "2.2.0"
+    "@amiriel/core": "^0.0.1-beta.6"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.3",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.7",
-    "vue": "^3.5.34",
-    "vue-tsc": "^3.1.8"
+    "typescript": "^5.9.3"
   }
 }
